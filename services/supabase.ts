@@ -5,23 +5,18 @@ const supabaseKey = 'sb_publishable_-1YHSyZNFypA-reprMXXfQ_qESxGBT2';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Resend API
-const RESEND_API_KEY = 're_9XUeiNo9_JhszHz6BJ3scjFF3ktMyqahz';
+// 批量发送邮件给所有订阅者
+export async function sendBulkEmail(subscribers: { email: string }[], subject: string, html: string) {
+  const emails = subscribers.map(s => s.email).filter(Boolean);
+  if (emails.length === 0) return;
 
-// 发送邮件
-export async function sendEmail(to: string[], subject: string, html: string) {
-  const response = await fetch('https://api.resend.com/emails', {
+  // 通过 API 路由发送
+  const response = await fetch('/api/send-email', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      from: 'Warm & Cycle <noreply@warmcycle.space>',
-      to,
-      subject,
-      html,
-    }),
+    body: JSON.stringify({ to: emails, subject, html }),
   });
 
   if (!response.ok) {
@@ -30,19 +25,6 @@ export async function sendEmail(to: string[], subject: string, html: string) {
   }
 
   return response.json();
-}
-
-// 批量发送邮件给所有订阅者
-export async function sendBulkEmail(subscribers: { email: string }[], subject: string, html: string) {
-  const emails = subscribers.map(s => s.email).filter(Boolean);
-  if (emails.length === 0) return;
-
-  // Resend 支持批量发送，但免费版每次最多 100 个
-  const batchSize = 50;
-  for (let i = 0; i < emails.length; i += batchSize) {
-    const batch = emails.slice(i, i + batchSize);
-    await sendEmail(batch, subject, html);
-  }
 }
 
 // 集合操作封装
