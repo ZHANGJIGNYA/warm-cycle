@@ -23,7 +23,7 @@ const App: React.FC = () => {
         await initAuth();
 
         // 加载活动数据
-        const eventsRes = await eventsCollection.orderBy('date', 'desc').get();
+        const eventsRes = await eventsCollection.get();
         if (eventsRes.data) {
           setEvents(eventsRes.data as DonationEvent[]);
         }

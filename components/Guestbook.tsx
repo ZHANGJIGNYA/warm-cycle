@@ -13,7 +13,7 @@ const Guestbook: React.FC = () => {
   useEffect(() => {
     async function loadMessages() {
       try {
-        const res = await messagesCollection.orderBy('date', 'desc').get();
+        const res = await messagesCollection.get();
         if (res.data) {
           setMessages(res.data as GuestbookMessage[]);
         }
