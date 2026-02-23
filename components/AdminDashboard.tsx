@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { DonationEvent, EventStatus, Subscriber, PostcardStatus } from '../types';
 import { Plus, Send, MapPin, Users, Calendar, X, Eye, Edit2, Lock, Filter, Search, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
-import { eventsCollection, subscribersCollection, uploadImage } from '../services/cloudbase';
+import { eventsCollection, subscribersCollection, uploadImage } from '../services/supabase';
 
 interface AdminDashboardProps {
   events: DonationEvent[];

@@ -7,7 +7,7 @@ import Guestbook from './components/Guestbook';
 import Footer from './components/Footer';
 import AdminDashboard from './components/AdminDashboard';
 import { DonationEvent, EventStatus, GuestbookMessage, Subscriber } from './types';
-import { initAuth, eventsCollection, subscribersCollection } from './services/cloudbase';
+import { initAuth, eventsCollection, subscribersCollection } from './services/supabase';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');

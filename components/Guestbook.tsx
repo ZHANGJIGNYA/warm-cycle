@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GuestbookMessage } from '../types';
 import { generateEncouragement } from '../services/geminiService';
 import { MessageCircle, Heart, User, Sparkles } from 'lucide-react';
-import { messagesCollection } from '../services/cloudbase';
+import { messagesCollection } from '../services/supabase';
 
 const Guestbook: React.FC = () => {
   const [messages, setMessages] = useState<GuestbookMessage[]>([]);
