@@ -96,12 +96,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
 
   // --- Image Upload Logic (云存储) ---
   const [uploading, setUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, target: 'EVENT' | 'EMAIL' | 'EDIT') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
+    setUploadStatus('正在上传...');
     try {
       const url = await uploadImage(file);
       const markdownImage = `\n\n![${file.name}](${url})\n\n`;
@@ -119,8 +121,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
           description: (editingEvent.description || '') + markdownImage
         });
       }
+      setUploadStatus('上传成功 ✓');
+      setTimeout(() => setUploadStatus(''), 2000);
     } catch (err) {
-      alert('图片上传失败，请重试');
+      setUploadStatus('上传失败 ✗');
+      setTimeout(() => setUploadStatus(''), 2000);
     } finally {
       setUploading(false);
       e.target.value = '';
@@ -335,15 +340,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
                         <label className="block text-xs font-semibold text-gray-500 uppercase">详细描述 (Markdown)</label>
                         <div className="flex items-center gap-2">
                            {/* Upload Button */}
-                           <label className="cursor-pointer flex items-center gap-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 py-1 rounded transition-colors">
-                              <Upload className="w-3 h-3" /> 插入本地照片
-                              <input 
-                                type="file" 
-                                accept="image/*" 
-                                className="hidden" 
+                           <label className={`cursor-pointer flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${uploading ? 'bg-gray-200 text-gray-400 cursor-wait' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
+                              <Upload className="w-3 h-3" /> {uploading ? '上传中...' : '插入本地照片'}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
                                 onChange={(e) => handleImageUpload(e, 'EVENT')}
+                                disabled={uploading}
                               />
                            </label>
+                           {uploadStatus && (
+                             <span className={`text-xs px-2 py-1 rounded ${uploadStatus.includes('成功') ? 'bg-green-100 text-green-600' : uploadStatus.includes('失败') ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}>
+                               {uploadStatus}
+                             </span>
+                           )}
                            <button 
                              type="button" 
                              onClick={() => setPreviewMode(!previewMode)}
