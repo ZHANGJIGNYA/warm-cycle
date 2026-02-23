@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { DonationEvent, EventStatus, Subscriber, PostcardStatus } from '../types';
-import { Plus, Send, MapPin, Users, Calendar, X, Eye, Edit2, Lock, Filter, Search, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Send, MapPin, Users, Calendar, X, Eye, Edit2, Lock, Filter, Search, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { eventsCollection, subscribersCollection } from '../services/cloudbase';
 
 interface AdminDashboardProps {
@@ -38,6 +38,50 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
 
   // --- Postcard Filter State ---
   const [postcardFilter, setPostcardFilter] = useState<'ALL' | 'PENDING' | 'SENT'>('ALL');
+
+  // --- Edit Event State ---
+  const [editingEvent, setEditingEvent] = useState<DonationEvent | null>(null);
+
+  // --- Delete Event ---
+  const handleDeleteEvent = async (event: DonationEvent) => {
+    if (!confirm(`确定删除「${event.title}」吗？`)) return;
+    try {
+      const dbId = (event as any)._id;
+      if (dbId) {
+        await eventsCollection.doc(dbId).remove();
+      }
+      setEvents(events.filter(e => e.id !== event.id));
+      alert('已删除');
+    } catch (err) {
+      console.error('删除失败:', err);
+      alert('删除失败');
+    }
+  };
+
+  // --- Update Event ---
+  const handleUpdateEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingEvent) return;
+    try {
+      const dbId = (editingEvent as any)._id;
+      const updateData = {
+        title: editingEvent.title,
+        date: editingEvent.date,
+        status: editingEvent.status,
+        description: editingEvent.description,
+        donationLink: editingEvent.status === EventStatus.COLLECTING ? editingEvent.donationLink : undefined,
+      };
+      if (dbId) {
+        await eventsCollection.doc(dbId).update(updateData);
+      }
+      setEvents(events.map(ev => ev.id === editingEvent.id ? { ...ev, ...updateData } : ev));
+      setEditingEvent(null);
+      alert('已更新');
+    } catch (err) {
+      console.error('更新失败:', err);
+      alert('更新失败');
+    }
+  };
 
   // --- Auth Logic ---
   const handleLogin = (e: React.FormEvent) => {
@@ -344,7 +388,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
                  <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
                   {events.map(event => (
                     <div key={event.id} className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                      <div className="font-bold text-gray-800">{event.title}</div>
+                      <div className="flex justify-between items-start">
+                        <div className="font-bold text-gray-800">{event.title}</div>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => setEditingEvent(event)}
+                            className="p-1 text-gray-400 hover:text-blue-500"
+                            title="编辑"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEvent(event)}
+                            className="p-1 text-gray-400 hover:text-red-500"
+                            title="删除"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
                       <div className="flex items-center gap-2 mt-1 text-xs">
                         <span className={`px-2 py-0.5 rounded-full ${event.status === EventStatus.COLLECTING ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600'}`}>
                           {event.status}
@@ -523,6 +585,89 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
 
         </div>
       </div>
+
+      {/* Edit Event Modal */}
+      {editingEvent && (
+        <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl w-full max-w-lg p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-lg">编辑动态</h3>
+              <button onClick={() => setEditingEvent(null)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateEvent} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">标题</label>
+                <input
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-primary outline-none"
+                  value={editingEvent.title}
+                  onChange={e => setEditingEvent({ ...editingEvent, title: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">日期</label>
+                  <input
+                    type="date"
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-primary outline-none"
+                    value={editingEvent.date}
+                    onChange={e => setEditingEvent({ ...editingEvent, date: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">状态</label>
+                  <select
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-primary outline-none"
+                    value={editingEvent.status}
+                    onChange={e => setEditingEvent({ ...editingEvent, status: e.target.value as EventStatus })}
+                  >
+                    {Object.values(EventStatus).map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              {editingEvent.status === EventStatus.COLLECTING && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">捐赠链接</label>
+                  <input
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-primary outline-none"
+                    value={editingEvent.donationLink || ''}
+                    onChange={e => setEditingEvent({ ...editingEvent, donationLink: e.target.value })}
+                    placeholder="https://docs.qq.com/form/..."
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">描述 (Markdown)</label>
+                <textarea
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-primary outline-none h-32 resize-none"
+                  value={editingEvent.description}
+                  onChange={e => setEditingEvent({ ...editingEvent, description: e.target.value })}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingEvent(null)}
+                  className="flex-1 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-rose-600"
+                >
+                  保存
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
