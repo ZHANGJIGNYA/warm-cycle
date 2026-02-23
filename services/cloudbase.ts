@@ -16,9 +16,18 @@ export const subscribersCollection = db.collection('subscribers');
 
 // 初始化匿名登录
 export async function initAuth() {
-  const loginState = await auth.getLoginState();
-  if (!loginState) {
-    await auth.anonymousAuthProvider().signIn();
+  try {
+    const loginState = await auth.getLoginState();
+    if (!loginState) {
+      console.log('正在匿名登录...');
+      await auth.anonymousAuthProvider().signIn();
+      console.log('匿名登录成功');
+    } else {
+      console.log('已登录');
+    }
+  } catch (err) {
+    console.error('登录失败:', err);
+    throw err;
   }
 }
 
