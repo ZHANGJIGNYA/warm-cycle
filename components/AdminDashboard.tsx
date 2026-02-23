@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { DonationEvent, EventStatus, Subscriber, PostcardStatus } from '../types';
 import { Plus, Send, MapPin, Users, Calendar, X, Eye, Edit2, Lock, Filter, Search, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
-import { eventsCollection, subscribersCollection, uploadImage } from '../services/supabase';
+import { eventsCollection, subscribersCollection, uploadImage, sendBulkEmail } from '../services/supabase';
 
 interface AdminDashboardProps {
   events: DonationEvent[];
@@ -194,11 +194,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
   const handleSendEmail = async () => {
     if (!emailSubject || !emailBody) return;
     setIsSending(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSending(false);
-    alert(`邮件已发送给 ${subscribers.length} 位订阅者！`);
-    setEmailSubject('');
-    setEmailBody('');
+    try {
+      // 将 Markdown 转换为简单 HTML
+      const html = emailBody
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width:100%;border-radius:8px;margin:10px 0;">');
+
+      await sendBulkEmail(subscribers, emailSubject, html);
+      alert(`邮件已发送给 ${subscribers.length} 位订阅者！`);
+      setEmailSubject('');
+      setEmailBody('');
+    } catch (err) {
+      console.error('发送邮件失败:', err);
+      alert('发送失败，请重试');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   // --- Render Login Screen ---
