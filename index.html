@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Warm & Cycle | 温暖大山的孩子</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#e11d48',
+              secondary: '#fb7185',
+              accent: '#fff1f2',
+              dark: '#0f172a',
+              xhs: '#ff2442',
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #fff1f2; }
+      ::-webkit-scrollbar-thumb { background: #fb7185; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
+      .markdown-content p { margin-bottom: 1em; }
+      .markdown-content img { border-radius: 0.5rem; margin-top: 1em; margin-bottom: 1em; width: 100%; max-height: 400px; object-fit: cover; }
+      .markdown-content strong { color: #be123c; font-weight: 600; }
+      .markdown-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+      .markdown-content a { color: #e11d48; text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
