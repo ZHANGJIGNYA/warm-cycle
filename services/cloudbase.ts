@@ -1,7 +1,7 @@
 import cloudbase from '@cloudbase/js-sdk';
 
 const app = cloudbase.init({
-  env: 'tnt-3etivf75m',
+  env: 'warm-cycle-4ge2w7354fdc30e8',
 });
 
 // 匿名登录
