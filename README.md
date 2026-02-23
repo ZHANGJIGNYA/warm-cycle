@@ -1,20 +1,29 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Warm & Cycle 🧡
 
-# Run and deploy your AI Studio app
+一个公益捐赠追踪网站，记录我们小组对山区学校的每一次爱心捐赠。
 
-This contains everything you need to run your app locally.
+## 🌐 访问
 
-View your app in AI Studio: https://ai.studio/apps/temp/1
+**网站地址**: [warmcycle.space](https://warmcycle.space)
 
-## Run Locally
+## ✨ 功能
 
-**Prerequisites:**  Node.js
+- **捐赠足迹** - 按年份季度展示所有捐赠活动，支持图片轮播
+- **订阅通知** - 用户可订阅获取最新活动通知
+- **温暖留言** - 受助学生、志愿者、捐赠者可留言互动
+- **后台管理** - 发布活动、群发邮件、管理明信片地址
 
+## 🛠 技术栈
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- **前端**: React + TypeScript + Tailwind CSS
+- **数据库**: Supabase
+- **部署**: Vercel
+- **邮件**: Resend
+
+## 📝 关于我们
+
+我们是一个 3 人公益小组，从 2024 年开始为山区学校募集物资。至今已组织多次捐赠活动，包括冬衣、卫生用品、文具、图书等。
+
+---
+
+*让爱循环，温暖每一个孩子* 💕
