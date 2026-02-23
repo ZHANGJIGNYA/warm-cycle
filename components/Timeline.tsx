@@ -44,17 +44,17 @@ const Timeline: React.FC<TimelineProps> = ({ events }) => {
 
                   {/* Content Card */}
                   <div className={`ml-20 md:ml-0 w-full md:w-5/12 ${isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'}`}>
-                    <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-50 group">
+                    <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-50 group overflow-hidden">
                       <div className={`flex flex-col ${isLeft ? 'md:items-end' : 'md:items-start'}`}>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mb-2 ${
                             event.status === EventStatus.COMPLETED ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
                         }`}>
                           {event.status}
                         </span>
-                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">{event.title}</h3>
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors break-words">{event.title}</h3>
                         <time className="text-sm text-gray-400 mb-3 block">{event.date}</time>
-                        
-                        <div className={`text-gray-600 text-sm mb-4 leading-relaxed markdown-content prose prose-sm prose-rose ${isLeft ? 'text-right' : 'text-left'}`}>
+
+                        <div className={`text-gray-600 text-sm mb-4 leading-relaxed markdown-content prose prose-sm prose-rose max-w-full overflow-hidden break-words ${isLeft ? 'text-right' : 'text-left'}`}>
                           <ReactMarkdown>{event.description}</ReactMarkdown>
                         </div>
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { DonationEvent, EventStatus, Subscriber, PostcardStatus } from '../types';
 import { Plus, Send, MapPin, Users, Calendar, X, Eye, Edit2, Lock, Filter, Search, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
-import { eventsCollection, subscribersCollection } from '../services/cloudbase';
+import { eventsCollection, subscribersCollection, uploadImage } from '../services/cloudbase';
 
 interface AdminDashboardProps {
   events: DonationEvent[];
@@ -94,28 +94,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
     }
   };
 
-  // --- Image Upload Logic (Base64) ---
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'EVENT' | 'EMAIL') => {
+  // --- Image Upload Logic (云存储) ---
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, target: 'EVENT' | 'EMAIL' | 'EDIT') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      const markdownImage = `\n\n![${file.name}](${base64String})\n\n`;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      const markdownImage = `\n\n![${file.name}](${url})\n\n`;
 
       if (target === 'EVENT') {
         setNewEvent(prev => ({
           ...prev,
           description: (prev.description || '') + markdownImage
         }));
-      } else {
+      } else if (target === 'EMAIL') {
         setEmailBody(prev => prev + markdownImage);
+      } else if (target === 'EDIT' && editingEvent) {
+        setEditingEvent({
+          ...editingEvent,
+          description: (editingEvent.description || '') + markdownImage
+        });
       }
-    };
-    reader.readAsDataURL(file);
-    // Reset input
-    e.target.value = '';
+    } catch (err) {
+      alert('图片上传失败，请重试');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   };
 
   // --- Timeline Logic ---
@@ -642,7 +651,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
                 </div>
               )}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">描述 (Markdown)</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase">描述 (Markdown)</label>
+                  <label className={`cursor-pointer flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${uploading ? 'bg-gray-200 text-gray-400' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
+                    <Upload className="w-3 h-3" /> {uploading ? '上传中...' : '插入图片'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageUpload(e, 'EDIT')}
+                      disabled={uploading}
+                    />
+                  </label>
+                </div>
                 <textarea
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-primary outline-none h-32 resize-none"
                   value={editingEvent.description}
