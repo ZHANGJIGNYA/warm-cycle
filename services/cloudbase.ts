@@ -20,7 +20,7 @@ export async function initAuth() {
     const loginState = await auth.getLoginState();
     if (!loginState) {
       console.log('正在匿名登录...');
-      await auth.anonymousAuthProvider().signIn();
+      await auth.signInAnonymously();
       console.log('匿名登录成功');
     } else {
       console.log('已登录');
