@@ -211,7 +211,9 @@ const Timeline: React.FC<TimelineProps> = ({ events }) => {
                                     </div>
                                   ) : (
                                     <p className="text-gray-500 text-sm line-clamp-2">
-                                      {textContent.slice(0, 80)}{textContent.length > 80 ? '...' : ''}
+                                      {/* 修复：增加对 textContent 存在性的判断，防止渲染出 0 或 00 */}
+                                      {textContent ? textContent.slice(0, 80) : ""}
+                                      {textContent.length > 80 ? '...' : ''}
                                     </p>
                                   )}
 
