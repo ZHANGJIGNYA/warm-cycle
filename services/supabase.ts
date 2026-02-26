@@ -88,15 +88,16 @@ export const subscribersCollection = {
 // 图片上传到 Supabase Storage
 export async function uploadImage(file: File): Promise<string> {
 
-  const safeName = file.name.replace(/[\s()]/g, '_');
+  const safeName = file.name.replace(/[\s()%/]/g, '_');
   const fileName = `${Date.now()}_${safeName}`;
-  // const fileName = `${Date.now()}_${file.name}`;
+
   const { data, error } = await supabase.storage
     .from('images')
     .upload(fileName, file);
 
   if (error) throw error;
 
+  // 获取 URL 时，Supabase SDK 会自动处理编码
   const { data: urlData } = supabase.storage
     .from('images')
     .getPublicUrl(fileName);
