@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Heart, Lock } from 'lucide-react';
 import { statsCollection } from '../services/supabase';
-
+import WechatModal from './WechatModal'; // 确保路径正确
 
 interface FooterProps {
   onAdminClick?: () => void;
@@ -11,6 +11,7 @@ const Footer: React.FC<FooterProps> = ({ onAdminClick }) => {
 
 
   const [views, setViews] = useState<number | null>(null);
+  const [isWechatOpen, setIsWechatOpen] = useState(false);
 
   useEffect(() => {
     // 组件加载时获取浏览量
@@ -31,7 +32,11 @@ const Footer: React.FC<FooterProps> = ({ onAdminClick }) => {
           感谢每一位同行的你，让世界变得更加温暖。
         </p>
         <div className="flex justify-center space-x-6 text-sm text-gray-500">
-          <a href="#" className="hover:text-white transition-colors">微信公众号</a>
+          <button onClick={() => setIsWechatOpen(true)} className="hover:text-white transition-colors">
+              微信公众号
+          </button>
+
+          <WechatModal isOpen={isWechatOpen} onClose={() => setIsWechatOpen(false)} />
           <span className="border-l border-gray-700 h-4 my-auto"></span>
           <a href="#" className="hover:text-white transition-colors">联系我们</a>
           <span className="border-l border-gray-700 h-4 my-auto"></span>
