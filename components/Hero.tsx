@@ -18,7 +18,8 @@ const Hero: React.FC = () => {
             只想把这份温暖<span className="text-primary">传递下去</span>。
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 leading-relaxed">
-             这里没有复杂的流程，只有我们四个女生和一群有爱心的朋友。我们想做的很简单：把你不再需要的衣物和卫生巾，亲手送到大山里真正需要的孩子们手中。
+            这里没有复杂的流程，只有四个女生。我们负责实地审核对接信息，并提供反馈照片。    
+            由你将闲置衣物或新购卫生巾，精准邮寄给需要的孩子。
           </p>
           <div className="mt-8 flex justify-center gap-4">
              <button onClick={() => document.getElementById('timeline')?.scrollIntoView({behavior: 'smooth'})} className="px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-primary hover:bg-rose-700 md:text-lg shadow-lg hover:shadow-xl transition-all">
@@ -33,9 +34,9 @@ const Hero: React.FC = () => {
         {/* Feature Image */}
         <div className="mt-16 relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
              <img 
-                src="https://picsum.photos/1200/500?grayscale&blur=2" 
-                alt="孩子们收到礼物的笑脸" 
-                className="w-full h-64 md:h-96 object-cover hover:scale-105 transition-transform duration-700"
+                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+                alt="雪山" 
+                className="w-full h-64 md:h-96 object-cover grayscale opacity-95 hover:grayscale-0 transition-all duration-1000"
              />
              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-8">
                  <p className="text-white text-lg font-medium tracking-wide">每一次传递，都是心与心的连接</p>

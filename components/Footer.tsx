@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Heart, Lock } from 'lucide-react';
+import { statsCollection } from '../services/supabase';
+
 
 interface FooterProps {
   onAdminClick?: () => void;
 }
 
 const Footer: React.FC<FooterProps> = ({ onAdminClick }) => {
+
+
+  const [views, setViews] = useState<number | null>(null);
+
+  useEffect(() => {
+    // 组件加载时获取浏览量
+    statsCollection.getViews()
+      .then(setViews)
+      .catch(err => console.error('获取浏览量失败:', err));
+  }, []);
+
   return (
     <footer className="bg-dark text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -26,9 +39,17 @@ const Footer: React.FC<FooterProps> = ({ onAdminClick }) => {
           <button onClick={onAdminClick} className="hover:text-white transition-colors flex items-center gap-1">
             <Lock className="w-3 h-3" /> 管理入口
           </button>
+          
+          <span className="border-l border-gray-700 h-4 my-auto"></span>
+          {/* 隐秘浏览量展示 */}
+          <div className="flex items-center gap-1 cursor-default group">
+            <Heart className="w-3 h-3 text-gray-600 group-hover:text-rose-400 transition-colors" />
+            <span className="text-xs text-gray-600">{views ?? '...'}</span>
+          </div>
+          
         </div>
         <div className="mt-8 text-xs text-gray-600">
-          © {new Date().getFullYear()} Warm & Cycle Group. All rights reserved.
+          © 2025- {new Date().getFullYear()} Warm & Cycle Group. All rights reserved.
         </div>
       </div>
     </footer>

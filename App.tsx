@@ -7,7 +7,7 @@ import Guestbook from './components/Guestbook';
 import Footer from './components/Footer';
 import AdminDashboard from './components/AdminDashboard';
 import { DonationEvent, EventStatus, GuestbookMessage, Subscriber } from './types';
-import { initAuth, eventsCollection, subscribersCollection } from './services/supabase';
+import { initAuth, eventsCollection, subscribersCollection, statsCollection } from './services/supabase';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
@@ -22,6 +22,8 @@ const App: React.FC = () => {
       try {
         await initAuth();
 
+        // 记录访问量
+        await statsCollection.incrementViews();
         // 加载活动数据
         const eventsRes = await eventsCollection.get();
         if (eventsRes.data) {

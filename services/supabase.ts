@@ -105,3 +105,23 @@ export async function uploadImage(file: File): Promise<string> {
 export async function initAuth() {
   console.log('Supabase 已连接');
 }
+
+export const statsCollection = {
+  async getViews() {
+    const { data, error } = await supabase
+      .from('stats')
+      .select('count')
+      .eq('id', 'page_views')
+      .single();
+    if (error) throw error;
+    return data?.count || 0;
+  },
+  async incrementViews() {
+    // 这里的逻辑保持不变
+    const { data, error } = await supabase.rpc('increment_view_count', { row_id: 'page_views' });
+    if (error) {
+       const current = await this.getViews();
+       await supabase.from('stats').update({ count: current + 1 }).eq('id', 'page_views');
+    }
+  }
+};
