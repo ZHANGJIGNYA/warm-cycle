@@ -38,6 +38,7 @@ export interface Subscriber {
   email: string;
   wantsPostcard: boolean;
   address?: string;
+  zip?: string;
   phone?: string;
   postcardStatus?: PostcardStatus; // For the current period
   postcardYear?: string; // e.g., "2024-Spring"

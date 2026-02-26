@@ -378,8 +378,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ events, setEvents, subs
                       </div>
                       
                       {previewMode ? (
-                        <div className="w-full p-4 border rounded min-h-[160px] bg-gray-50 prose prose-sm prose-rose max-w-none markdown-content">
-                           <ReactMarkdown>{newEvent.description || '*暂无内容*'}</ReactMarkdown>
+                        <div className="prose w-full p-4 border rounded min-h-[160px] bg-gray-50 prose prose-sm prose-rose max-w-none markdown-content">
+                           <ReactMarkdown>{editingEvent.description}</ReactMarkdown>
                         </div>
                       ) : (
                         <textarea 

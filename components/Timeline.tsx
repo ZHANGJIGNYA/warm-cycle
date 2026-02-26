@@ -195,7 +195,7 @@ const Timeline: React.FC<TimelineProps> = ({ events }) => {
 
                                   {isExpanded ? (
                                     <div className="markdown-content prose prose-sm prose-rose max-w-full overflow-hidden break-words text-gray-600 text-sm">
-                                      <ReactMarkdown>{textContent}</ReactMarkdown>
+                                      <ReactMarkdown>{event.description}</ReactMarkdown>
                                       {event.details && (
                                         <div className="flex gap-4 text-xs text-gray-500 mt-3 pt-3 border-t">
                                           {event.details.itemCount && <span>📦 {event.details.itemCount} 件物资</span>}

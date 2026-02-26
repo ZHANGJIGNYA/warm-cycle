@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, MapPin, Send, Sparkles, Check, Phone, Users } from 'lucide-react';
 import { generateThankYouNote } from '../services/geminiService';
 import { Subscriber } from '../types';
+import { format } from 'path';
 
 interface SubscribeFormProps {
   onSubscribe?: (subscriber: Subscriber) => void;
@@ -35,7 +36,8 @@ const SubscribeForm: React.FC<SubscribeFormProps> = ({ onSubscribe }) => {
           wantsPostcard: formData.wantsPostcard,
           address: formData.address,
           phone: formData.phone,
-          postcardStatus: 'PENDING'
+          zip: formData.zip,
+          postcardStatus: 'PENDING',
         });
       }
       
