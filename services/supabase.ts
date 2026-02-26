@@ -87,7 +87,10 @@ export const subscribersCollection = {
 
 // 图片上传到 Supabase Storage
 export async function uploadImage(file: File): Promise<string> {
-  const fileName = `${Date.now()}_${file.name}`;
+
+  const cleanFileName = file.name.replace(/\s+/g, '_').replace(/[()]/g, '');
+  const fileName = `${Date.now()}_${cleanFileName}`;
+  // const fileName = `${Date.now()}_${file.name}`;
   const { data, error } = await supabase.storage
     .from('images')
     .upload(fileName, file);
